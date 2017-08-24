@@ -1,6 +1,6 @@
 {
   "name": "runner-js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Better Async Handler To Simplify Your Async Flow Process And Code Testing",
   "main": "./dist/runner.min.js",
   "scripts": {
