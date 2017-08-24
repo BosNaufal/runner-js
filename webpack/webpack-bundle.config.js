@@ -14,7 +14,7 @@ module.exports = {
   output: {
     path: __dirname + '/../dist/',
     publicPath: '../dist/',
-    filename: npm.name + (isMinify ? '.min' : '') + '.js',
+    filename: 'runner' + (isMinify ? '.min' : '') + '.js',
     libraryTarget: "umd",
     library: "Runner"
   },
