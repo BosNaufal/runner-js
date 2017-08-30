@@ -17,7 +17,7 @@ You need to install babel-polyfill and babel regenerator plugin and put it in th
 npm install babel-polyfill babel-plugin-transform-regenerator
 ```
 
-And Don't forget to add the plugin to your [```.babelrc```](./.babelrc)
+And Don't forget to add the plugin to your [`.babelrc`](./.babelrc)
 ```json
 {
   "plugins": ["transform-regenerator"]
@@ -48,7 +48,7 @@ api.fetchProduct()
 })
 ```
 
-Or you can skip the ```let``` declaration
+Or you can skip the `let` declaration
 
 ```javascript
 // source: https://codepen.io/aurelien-bottazini/pen/VPQLBp?editors=0011
@@ -90,8 +90,9 @@ You could use aync/await which are compatible with Promises. You can easily do t
 
 
 ## How about Runner JS?
-According to our cases above, we can simplify that code with [```Generator Function```](). It will make our async code looks like synchronous code. Take a look:
+According to our cases above, we can simplify that code with [`Generator Function`](). It will make our async code looks like synchronous code. Take a look:
 ```javascript
+import Runner, { call } from 'runner-js'
 import api from '../api'
 
 function *fetchFlow() {
@@ -101,6 +102,8 @@ function *fetchFlow() {
   let lastFetch = yield call(api.needStatisticProductAndSeller, { statistic, product, seller })
   return lastFetch
 }
+
+Runner(fetchFlow)
 ```
 
 Pretty simple right? It works like async/await function. But You'll get a better testing process although your testing a deep promise function. Take a peek:
@@ -126,15 +129,15 @@ describe('fetchFlow()', function () {
 });
 ```
 
-Wait? Are you sure it's a valid testing process? I'm not sure yet. But It works. You don't need to mock the promises, You don't need run the real fetch function in the browser, It just works. Let me tell you how ```call()``` function works.
+Wait? Are you sure it's a valid testing process? I'm not sure yet. But It works. You don't need to mock the promises, You don't need run the real fetch function in the browser, It just works. Let me tell you how `call()` function works.
 
-```call()``` function is just an ordinary function that return a plain object contains our real function, I call it wrapper. So, the generator only pass the **plain object** while the runner excute the function from the object. Since we don't use the runner, we can test our code like the example above, Just need to deep compare two object.
+`call()` function is just an ordinary function that return a plain object contains our real function, I call it wrapper. So, the generator only pass the **plain object** while the runner excute the function from the object. Since we don't use the runner, we can test our code like the example above, Just need to deep compare two object.
 
 
 ## How About Nested Generator Function?
-It's just the same, you can wrap it with ```call()``` function.
+It's just the same, you can wrap it with `call()` function.
 ```javascript
-import { call } from 'runner-js'
+import Runner, { call, delay } from 'runner-js'
 import api from '../api'
 
 function *nestedGenFunc() {
@@ -145,6 +148,8 @@ function *nestedGenFunc() {
 function *fetchFlow() {
   let nested = yield call(nestedGenFunc)
 }
+
+Runner(fetchFlow)
 ```
 
 
@@ -152,7 +157,7 @@ function *fetchFlow() {
 Yes, it should. Just wrap it within an array! Check it out.
 
 ```javascript
-import { call } from 'runner-js'
+import Runner, { call } from 'runner-js'
 import api from '../api'
 
 function *fetchFlow() {
@@ -163,12 +168,14 @@ function *fetchFlow() {
   responses[0] // it will always the fetchProduct response
   responses[1] // it will always the otherApis response
 }
+
+Runner(fetchFlow)
 ```
 
 Or you can identity your call with making a parallel call within an object.
 
 ```javascript
-import { call } from 'runner-js'
+import Runner, { call } from 'runner-js'
 import api from '../api'
 
 function *fetchFlow() {
@@ -179,12 +186,14 @@ function *fetchFlow() {
   const productRes = allRes.product
   const otherRes = allRes.other
 }
+
+Runner(fetchFlow)
 ```
 
 ## It cares with concurrentcy
-Parallel call will make the every response has same index with the each its call wrapper. While the ```concurrent``` wrapper will push responses which recieved faster.
+Parallel call will make the every response has same index with the each its call wrapper. While the `concurrent` wrapper will push responses which recieved faster.
 ```javascript
-import { call, concurrent } from 'runner-js'
+import Runner, { call, concurrent } from 'runner-js'
 import api from '../api'
 
 function *fetchFlow() {
@@ -194,12 +203,14 @@ function *fetchFlow() {
   ])
   responses[0] // it can be fetchProduct response or otherApis response. Depend on which is faster
 }
+
+Runner(fetchFlow)
 ```
 
 ## Need some race?
 Runner has a race wrapper to make a race between an async progress. It only store one response which is fastest.
 ```javascript
-import { call, race } from 'runner-js'
+import Runner, { call, race } from 'runner-js'
 import api from '../api'
 
 function *fetchFlow() {
@@ -213,6 +224,8 @@ function *fetchFlow() {
     console.log("The winner is otherApis");
   }
 }
+
+Runner(fetchFlow)
 ```
 
 So now, you can test the flow and the fetch process separately. It will make your code easy to test. No more reason to not doing a test.
@@ -221,10 +234,10 @@ So now, you can test the flow and the fetch process separately. It will make you
 ## API
 | Method | Format | Description |
 | :--- | :--- | :--- |
-| [```call()```](## How about Runner JS?) | ```call(func, [argument1, [argument2, [argument3, ...]]])``` | It's used to call some function. For best practice you should have your function to be a promise. And the rest arguments is the arguments that will be passed to the function. |
-| ```delay()``` | ```delay(number)``` | It's just a simple method to delay some function inside the saga. Maybe, It will not used cause I made it just for making a fake async proccess |
-| [```concurrent()```](## It cares with concurrentcy) | ```concurrent(Array of call Function)``` | It's used to make a concurrentcy async function. it only take the first argument which is an Array of ```call()``` function |
-| [```race()```](## Need some race?) | ```race(Object of call Function)``` | It's used to make a race between some async function. it only take the first argument which is an Object of ```call()``` function |
+| [call()](## How about Runner JS?) | `call(func, [argument1, [argument2, [argument3, ...]]])` | It's used to call some function. For best practice you should have your function to be a promise. And the rest arguments is the arguments that will be passed to the function. |
+| delay() | `delay(number)` | It's just a simple method to delay some function inside the saga. Maybe, It will not used cause I made it just for making a fake async proccess |
+| [concurrent()](## It cares with concurrentcy) | `concurrent(Array of call Function)` | It's used to make a concurrentcy async function. it only take the first argument which is an Array of `call()` function |
+| [race()](## Need some race?) | `race(Object of call Function)` | It's used to make a race between some async function. it only take the first argument which is an Object of `call()` function |
 
 
 ## Credits

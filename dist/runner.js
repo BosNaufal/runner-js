@@ -2,7 +2,7 @@
  * Copyright (c) Naufal Rabbani (http://github.com/BosNaufal)
  * Licensed Under MIT (http://opensource.org/licenses/MIT)
  * 
- * Runner JS @ Version 0.0.1
+ * Runner JS @ Version 0.0.2
  * 
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -66,22 +66,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.race = exports.concurrent = exports.delay = exports.call = exports.runner = undefined;
+	exports.race = exports.concurrent = exports.delay = exports.call = exports.Runner = undefined;
 
 	var _wrapper = __webpack_require__(1);
 
-	var _runner = __webpack_require__(2);
+	var _Runner = __webpack_require__(2);
 
-	var _runner2 = _interopRequireDefault(_runner);
+	var _Runner2 = _interopRequireDefault(_Runner);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.runner = _runner2.default;
+	exports.Runner = _Runner2.default;
 	exports.call = _wrapper.call;
 	exports.delay = _wrapper.delay;
 	exports.concurrent = _wrapper.concurrent;
 	exports.race = _wrapper.race;
-	exports.default = _runner2.default;
+	exports.default = _Runner2.default;
 
 /***/ }),
 /* 1 */
@@ -189,7 +189,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.runParallel = runParallel;
 	exports.setWrapperType = setWrapperType;
 	exports.destructureWrapper = destructureWrapper;
-	exports.default = runner;
+	exports.default = Runner;
 
 	/**
 	 * To Check it is a Function or not
@@ -249,7 +249,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * To apply the comment in the iterator scope
 	 * @param  {Any} appliedFunction the returned value of some function
 	 * @param  {Function} done the callback after promised applied
-	 * @param  {Any} scope the variable scope of current runner
+	 * @param  {Any} scope the variable scope of current Runner
 	 * @return {Any} Can be callback or run the next iterator
 	 */
 	function doPromise(appliedFunction, done, scope) {
@@ -267,11 +267,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Run Single Iterator of Generator Function. And it should be a wrapper
 	 * @param {Object} wrapper The wrapper to runNext
 	 * @param {Function} callback The Callback when the function of wrapper need a callback or just to use it for runGenerator callback itself
-	 * @param {Object} scope Variable Scope of current runner
+	 * @param {Object} scope Variable Scope of current Runner
 	 * @return {Any} It can be runNext, or doPromise, or callback function
 	 */
 	function runGenerator(wrapper, callback, scope) {
-	  var runner = scope.runner,
+	  var Runner = scope.Runner,
 	      runNext = scope.runNext,
 	      currentRunningFunction = scope.currentRunningFunction,
 	      store = scope.store;
@@ -287,7 +287,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    if (isGeneratorFunction(func)) {
-	      return runner(func, store).then(function (res) {
+	      return Runner(func, store).then(function (res) {
 	        if (callback) return callback(res);
 	        return runNext(currentRunningFunction, res);
 	      });
@@ -348,8 +348,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Run the all the wrapper function at once
 	 * @param {Array} wrappers The array of wrapper
-	 * @param {Object} scope Variable scope of current runner
-	 * @return {runNext} To run the next iteration of current runner
+	 * @param {Object} scope Variable scope of current Runner
+	 * @return {runNext} To run the next iteration of current Runner
 	 */
 	function runParallel(wrappers, scope) {
 	  var runNext = scope.runNext,
@@ -422,9 +422,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * The RUNNER! To run the generator function. The Runner will set the variable scope of current running Generator Function
 	 * @param {Function} genFunc Generator Function that will be runned
 	 * @param {Object} [store={}] The initial Object to starting generator function
-	 * @return {Promise} The result will be promise. So we wait the runner till it done
+	 * @return {Promise} The result will be promise. So we wait the Runner till it done
 	 */
-	function runner(genFunc) {
+	function Runner(genFunc) {
 	  var store = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
 	  return new Promise(function (resolve, reject) {
@@ -443,7 +443,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var wrapper = nextRun.value;
 	      var isDone = nextRun.done;
 
-	      var scope = { runner: runner, runNext: runNext, currentRunningFunction: currentRunningFunction, store: store };
+	      var scope = { Runner: Runner, runNext: runNext, currentRunningFunction: currentRunningFunction, store: store };
 
 	      if (!isDone) {
 	        if (!wrapper) {

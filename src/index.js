@@ -1,5 +1,5 @@
 import { call, delay, concurrent, race } from './wrapper'
-import runner from './runner'
+import Runner from './Runner'
 
-export { runner, call, delay, concurrent, race }
-export default runner;
+export { Runner, call, delay, concurrent, race }
+export default Runner;

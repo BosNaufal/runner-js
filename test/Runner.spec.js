@@ -5,9 +5,9 @@ import 'babel-polyfill'
 import assert from 'assert'
 import chai, { expect } from 'chai';
 
-import { runner, call, concurrent, race } from '../src/index';
+import { Runner, call, concurrent, race } from '../src/index';
 
-describe('runner()', () => {
+describe('Runner()', () => {
 
     let async1 = (time) => {
       return new Promise((resolve, reject) => {
@@ -25,6 +25,14 @@ describe('runner()', () => {
       })
     }
 
+    let rejected = (time) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject("REJECTED!")
+        }, time)
+      })
+    }
+
     it('Should can be runned Async', function () {
       function *genFunc (store) {
         let a = yield [call(async1, 100), call(async2, 200)]
@@ -35,7 +43,7 @@ describe('runner()', () => {
         expect(b).to.be.an("string")
         expect(b).to.be.equal("Promise 2")
       }
-      runner(genFunc)
+      Runner(genFunc)
     });
 
 
@@ -59,8 +67,8 @@ describe('runner()', () => {
         expect(z).to.be.equal(2)
       }
 
-      runner(foo)
-      runner(bar)
+      Runner(foo)
+      Runner(bar)
     });
 
 
@@ -130,21 +138,49 @@ describe('runner()', () => {
         return y
       }
 
-      runner(parallel).then(([a, y]) => {
+      function *rejectedPromise(store) {
+        let err = yield call(rejected, 300)
+        return err
+      }
+
+      function *rejectedPromiseParallel(store) {
+        var y = yield [
+          call(generator),
+          call(ordinary),
+          call(generator),
+          call(rejected, 300),
+          call(ordinary),
+          call(generator),
+          call(async2),
+        ];
+        return y
+      }
+
+
+      Runner(parallel).then(([a, y]) => {
         console.log(a, y);
       })
 
-      runner(parallelObject).then((res) => {
+      Runner(parallelObject).then((res) => {
         console.log(res);
       })
 
-      runner(concurrentTask).then((res) => {
+      Runner(concurrentTask).then((res) => {
         console.log(res);
       })
 
-      runner(raceTask).then((res) => {
+      Runner(raceTask).then((res) => {
         console.log(res);
       })
+
+      Runner(rejectedPromise).then((res) => {
+        console.log(res);
+      })
+
+      Runner(rejectedPromiseParallel).then((res) => {
+        console.log("here", res);
+      })
+
     });
 
 

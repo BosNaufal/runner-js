@@ -62,7 +62,7 @@ export function objectHasBeenFilled(obj) {
  * To apply the comment in the iterator scope
  * @param  {Any} appliedFunction the returned value of some function
  * @param  {Function} done the callback after promised applied
- * @param  {Any} scope the variable scope of current runner
+ * @param  {Any} scope the variable scope of current Runner
  * @return {Any} Can be callback or run the next iterator
  */
 export function doPromise(appliedFunction, done, scope) {
@@ -79,11 +79,11 @@ export function doPromise(appliedFunction, done, scope) {
  * Run Single Iterator of Generator Function. And it should be a wrapper
  * @param {Object} wrapper The wrapper to runNext
  * @param {Function} callback The Callback when the function of wrapper need a callback or just to use it for runGenerator callback itself
- * @param {Object} scope Variable Scope of current runner
+ * @param {Object} scope Variable Scope of current Runner
  * @return {Any} It can be runNext, or doPromise, or callback function
  */
 export function runGenerator(wrapper, callback, scope) {
-  const { runner, runNext, currentRunningFunction, store } = scope
+  const { Runner, runNext, currentRunningFunction, store } = scope
 
   let { method, func, args } = wrapper
   if(isFunction(func)) {
@@ -94,7 +94,7 @@ export function runGenerator(wrapper, callback, scope) {
     }
 
     if(isGeneratorFunction(func)) {
-      return runner(func, store).then((res) => {
+      return Runner(func, store).then((res) => {
         if (callback) return callback(res)
         return runNext(currentRunningFunction, res)
       })
@@ -154,8 +154,8 @@ export function getParallelParameter(wrappers) {
 /**
  * Run the all the wrapper function at once
  * @param {Array} wrappers The array of wrapper
- * @param {Object} scope Variable scope of current runner
- * @return {runNext} To run the next iteration of current runner
+ * @param {Object} scope Variable scope of current Runner
+ * @return {runNext} To run the next iteration of current Runner
  */
 export function runParallel(wrappers, scope) {
   const { runNext, currentRunningFunction } = scope
@@ -220,9 +220,9 @@ export function destructureWrapper(wrapper) {
  * The RUNNER! To run the generator function. The Runner will set the variable scope of current running Generator Function
  * @param {Function} genFunc Generator Function that will be runned
  * @param {Object} [store={}] The initial Object to starting generator function
- * @return {Promise} The result will be promise. So we wait the runner till it done
+ * @return {Promise} The result will be promise. So we wait the Runner till it done
  */
-export default function runner(genFunc, store = {}) {
+export default function Runner(genFunc, store = {}) {
   return new Promise((resolve, reject) => {
     let currentRunningFunction = typeof(genFunc) === "function" ? genFunc(store) : genFunc
 
@@ -237,7 +237,7 @@ export default function runner(genFunc, store = {}) {
       let wrapper = nextRun.value
       let isDone = nextRun.done
 
-      const scope = { runner, runNext, currentRunningFunction, store }
+      const scope = { Runner, runNext, currentRunningFunction, store }
 
       if(!isDone) {
         if (!wrapper) {
