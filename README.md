@@ -234,10 +234,10 @@ So now, you can test the flow and the fetch process separately. It will make you
 ## API
 | Method | Format | Description |
 | :--- | :--- | :--- |
-| [call()](## How about Runner JS?) | `call(func, [argument1, [argument2, [argument3, ...]]])` | It's used to call some function. For best practice you should have your function to be a promise. And the rest arguments is the arguments that will be passed to the function. |
+| call() | `call(func, [argument1, [argument2, [argument3, ...]]])` | It's used to call some function. For best practice you should have your function to be a promise. And the rest arguments is the arguments that will be passed to the function. |
 | delay() | `delay(number)` | It's just a simple method to delay some function inside the saga. Maybe, It will not used cause I made it just for making a fake async proccess |
-| [concurrent()](## It cares with concurrentcy) | `concurrent(Array of call Function)` | It's used to make a concurrentcy async function. it only take the first argument which is an Array of `call()` function |
-| [race()](## Need some race?) | `race(Object of call Function)` | It's used to make a race between some async function. it only take the first argument which is an Object of `call()` function |
+| concurrent() | `concurrent(Array of call Function)` | It's used to make a concurrentcy async function. it only take the first argument which is an Array of `call()` function |
+| race() | `race(Object of call Function)` | It's used to make a race between some async function. it only take the first argument which is an Object of `call()` function |
 
 
 ## Credits
